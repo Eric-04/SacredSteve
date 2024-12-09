@@ -15,7 +15,7 @@ document.body.appendChild(renderer.domElement);
 const fov = 75; // degrees
 const aspect = w / h;
 const near = 0.1;
-const far = 10;
+const far = 100;
 const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 camera.position.z = 2; // moves the camera back a little bit
 
