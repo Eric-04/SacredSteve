@@ -7,7 +7,14 @@ export function createRoom() {
 
     // Load the texture map and bump map
     const bump_map = new THREE.TextureLoader().load('bump_mapping.png');
-    const text_map = new THREE.TextureLoader().load('wall_texture.png');
+    // const text_map = new THREE.TextureLoader().load('./wall_texture.png');
+    const text_map = new THREE.TextureLoader().load(
+        '/wall_texture.png',
+        () => console.log('Texture loaded successfully'),
+        undefined,
+        (err) => console.error('Error loading texture:', err)
+    );
+    
 
     // Create the front and back wall materials without bump map
     const wallMaterial = new THREE.MeshStandardMaterial({
@@ -18,7 +25,7 @@ export function createRoom() {
     const textureWallMaterial = new THREE.MeshStandardMaterial({
         color: 0xAAAAAA, // Base color for the wall
         side: THREE.FrontSide,
-        map: text_map
+        map: bump_map
     });
 
     // Create front wall
