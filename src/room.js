@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 export function createRoom() {
-    const roomWidth = 10;
+    const roomWidth = 14;
     const roomHeight = 14;
     const roomDepth = 20;
 
@@ -18,41 +18,37 @@ export function createRoom() {
         side: THREE.FrontSide,
     });
 
-// Create front wall
-const frontWallGeometry = new THREE.PlaneGeometry(roomWidth, roomHeight);
-const frontWall = new THREE.Mesh(frontWallGeometry, wallMaterial);
-frontWall.position.z = roomDepth / 2;
-frontWall.rotation.y = Math.PI;
+    // Create front wall
+    const frontWallGeometry = new THREE.PlaneGeometry(roomWidth, roomHeight);
+    const frontWall = new THREE.Mesh(frontWallGeometry, wallMaterial);
+    frontWall.position.z = roomDepth / 2;
+    frontWall.rotation.y = Math.PI;
 
-// Create back wall
-const backWallGeometry = new THREE.PlaneGeometry(roomWidth, roomHeight);
-const backWall = new THREE.Mesh(backWallGeometry, wallMaterial);
-backWall.position.z = -roomDepth / 2;
+    // Create back wall
+    const backWallGeometry = new THREE.PlaneGeometry(roomWidth, roomHeight);
+    const backWall = new THREE.Mesh(backWallGeometry, wallMaterial);
+    backWall.position.z = -roomDepth / 2;
 
-// Create left wall geometry
-const leftWallGeometry = new THREE.PlaneGeometry(roomDepth, roomHeight);
-applyBumpMap(leftWallGeometry, textureMap);  // Apply the bump map manually to the left wall
+    // Create left wall geometry
+    const leftWallGeometry = new THREE.PlaneGeometry(roomDepth, roomHeight);
+    // applyDisplacement(leftWallGeometry, textureMap, 2);  // Apply the bump map manually to the left wall
 
-// Create left wall mesh with the manually modified geometry
-const leftWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
-leftWall.position.x = -roomWidth / 2;
-leftWall.rotation.y = Math.PI / 2;
+    // Create left wall mesh with the manually modified geometry
+    const leftWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
+    leftWall.position.x = -roomWidth / 2;
+    leftWall.rotation.y = Math.PI / 2;
 
-// Create right wall geometry
-const rightWallGeometry = new THREE.PlaneGeometry(roomDepth, roomHeight);
-applyBumpMap(rightWallGeometry, textureMap);  // Apply the bump map manually to the right wall
+    // Create right wall geometry
+    const rightWallGeometry = new THREE.PlaneGeometry(roomDepth, roomHeight);
+    // applyDisplacement(rightWallGeometry, textureMap, 2);  // Apply the bump map manually to the right wall
 
-// Create right wall mesh with the manually modified geometry
-const rightWall = new THREE.Mesh(rightWallGeometry, wallMaterial);
-rightWall.position.x = roomWidth / 2;
-rightWall.rotation.y = -Math.PI / 2;
+    // Create right wall mesh with the manually modified geometry
+    const rightWall = new THREE.Mesh(rightWallGeometry, wallMaterial);
+    rightWall.position.x = roomWidth / 2;
+    rightWall.rotation.y = -Math.PI / 2;
 
     // Create floor
-    const floorMaterial = new THREE.MeshStandardMaterial({
-        color: 0x555555,   // Darker color for more absorption
-        roughness: 0.8,    // Higher roughness for more light scattering and absorption
-        metalness: 0.1,    // Low metalness (not reflective)
-    });
+    const floorMaterial = new THREE.MeshStandardMaterial({color: 0x555555});
         
     const floorGeometry = new THREE.PlaneGeometry(roomWidth, roomDepth);
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -80,7 +76,7 @@ rightWall.rotation.y = -Math.PI / 2;
     // Position 3 pillars on the left wall, 1 units away from the wall
     for (let i = 0; i < 3; i++) {
         const pillar = new THREE.Mesh(pillarGeometry, pillarMaterial);
-        pillar.position.x = -roomWidth / 2 + 1; 
+        pillar.position.x = -roomWidth / 2 + 1.5; 
         pillar.position.y += shiftAmount; 
         pillar.position.z = roomDepth / 3 * (i + 1) - (roomDepth / 2 + 3.5); 
         pillarGroup.add(pillar);
@@ -89,7 +85,7 @@ rightWall.rotation.y = -Math.PI / 2;
     // Position 3 pillars on the right wall, 1 units away from the wall
     for (let i = 0; i < 3; i++) {
         const pillar = new THREE.Mesh(pillarGeometry, pillarMaterial);
-        pillar.position.x = roomWidth / 2 - 1; 
+        pillar.position.x = roomWidth / 2 - 1.5; 
         pillar.position.y += shiftAmount; 
         pillar.position.z = roomDepth / 3 * (i + 1) - (roomDepth / 2 + 3.5);
         pillarGroup.add(pillar);
@@ -106,21 +102,21 @@ rightWall.rotation.y = -Math.PI / 2;
 
     // add windows on the front wall
     const window1 = new THREE.Mesh(windowGeometry, windowMaterial);
-    window1.position.set(-2, 2.5, frontWall.position.z - 0.01); // Left window
+    window1.position.set(-4, 2.5, frontWall.position.z - 0.01); 
 
     const window2 = new THREE.Mesh(windowGeometry, windowMaterial);
-    window2.position.set(2, 2.5, frontWall.position.z - 0.01); // Right window
+    window2.position.set(4, 2.5, frontWall.position.z - 0.01); 
 
     // add windows on the back wall
     const window3 = new THREE.Mesh(windowGeometry, windowMaterial);
-    window3.position.set(-2, 2.5, backWall.position.z + 0.01); 
+    window3.position.set(-4, 2.5, backWall.position.z + 0.01); 
 
     // add windows on the back wall
     const window4 = new THREE.Mesh(windowGeometry, windowMaterial);
-    window4.position.set(2, 2.5, backWall.position.z + 0.01); 
+    window4.position.set(4, 2.5, backWall.position.z + 0.01); 
 
     // Create the wide windows
-    const windowGeometry2 = new THREE.PlaneGeometry(7, 2); 
+    const windowGeometry2 = new THREE.PlaneGeometry(6, 3); 
     const windowMaterial2 = new THREE.MeshStandardMaterial({ 
         color: 0xFFFF99, 
         transparent: true, 
@@ -129,10 +125,10 @@ rightWall.rotation.y = -Math.PI / 2;
     });
 
     const longwindow1 = new THREE.Mesh(windowGeometry2, windowMaterial2);
-    longwindow1.position.set(0, 8, backWall.position.z + 0.01)
+    longwindow1.position.set(0, 8.5, backWall.position.z + 0.01)
 
     const longwindow2 = new THREE.Mesh(windowGeometry2, windowMaterial2);
-    longwindow2.position.set(0, 8, frontWall.position.z - 0.01)
+    longwindow2.position.set(0, 8.5, frontWall.position.z - 0.01)
 
     // Create the room group and add all parts
     const roomGroup = new THREE.Group();
@@ -169,7 +165,7 @@ rightWall.rotation.y = -Math.PI / 2;
     return roomGroup;
 }
 
-function applyBumpMap(geometry, texture) {
+function applyDisplacement(geometry, texture, repeat) {
     const vertices = geometry.attributes.position.array;
     const width = texture.image.width;
     const height = texture.image.height;
@@ -181,15 +177,15 @@ function applyBumpMap(geometry, texture) {
         const z = vertices[i + 2];  // Z position of vertex
 
         // Map the vertex's x and y position to the texture coordinates
-        const u = (x / geometry.parameters.width) * width;
-        const v = (y / geometry.parameters.height) * height;
+        const u = (x / (geometry.parameters.width / repeat)) * width;
+        const v = (y / (geometry.parameters.height / repeat)) * height;
 
         // Get the bump value from the texture (grayscale value)
         const bumpValue = texture.image.getImageData(u, v, 1, 1).data[0] / 255;
 
         // Apply displacement based on the bump value (higher bumpScale = stronger bump effect)
-        const bumpScale = 0.5; // Adjust for stronger/weaker bump
-        vertices[i + 2] = z + bumpValue * bumpScale; // Modify the Z (height) position
+        const bumpScale = 0.5; // displacement factor
+        vertices[i + 2] = z + bumpValue * bumpScale; // Modify the Z position
     }
 
     geometry.attributes.position.needsUpdate = true;  // Mark the geometry as needing an update
