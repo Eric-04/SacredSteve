@@ -6,6 +6,7 @@ import { setupKeyControls, updateSteveMovement } from './src/steve/animate-steve
 import { createNetherPortal } from "./src/portal.js";
 import { createWalls } from "./src/texture-walls.js";
 import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
+import { setupShadowMapping, renderShadowMap } from './src/shadowmap.js';
 
 // THREE.js needs 3 things
 // 1. renderer
@@ -73,6 +74,14 @@ const pointLight = new THREE.PointLight(0xffffff, 0.6);
 pointLight.position.set(2, 2, 2);
 scene.add(pointLight);
 
+// Add shadows
+const { lightCamera, shadowMaterial, sceneMaterial, shadowMap, updateShadowMatrix } = setupShadowMapping(scene, renderer);
+steve.castShadow = true;
+steve.material = sceneMaterial;
+
+room.children[5].castShadow = true;
+room.children[5].material = sceneMaterial;
+
 // Key controls
 const keys = { forward: false, backward: false, left: false, right: false, jump: false };
 setupKeyControls(keys);
@@ -95,6 +104,9 @@ function animate(t = 0) {
     if (timeUniform) {
         timeUniform.time.value += deltaTime;
     }
+
+    renderShadowMap(scene, renderer, lightCamera, shadowMap, shadowMaterial);
+    // updateShadowMatrix();
 
     // Render the scene
     renderer.render(scene, camera);
