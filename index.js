@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { createRoom } from './src/room.js';
-import { createMinecraftSteve } from './src/steve.js';
+import { createMinecraftSteve } from './src/steve/create-steve.js';
+import { setupKeyControls, updateSteveMovement } from './src/steve/animate-steve.js';
 
 // THREE.js needs 3 things
 // 1. renderer
@@ -60,9 +61,15 @@ const pointLight = new THREE.PointLight(0xffffff, 0.8);
 pointLight.position.set(2, 2, 2);
 scene.add(pointLight);
 
+// Key controls
+const keys = { forward: false, backward: false, left: false, right: false, jump: false };
+setupKeyControls(keys);
+
 function animate(t = 0) {
+    const deltaTime = 0.016; // Approximate frame time for 60 FPS
     requestAnimationFrame(animate);
     // mesh.rotation.y = t * 0.001;
+    updateSteveMovement(steve, keys, deltaTime, t);
     renderer.render(scene, camera);
     controls.update();
 }
