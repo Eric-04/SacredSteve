@@ -7,7 +7,8 @@ import { createNetherPortal } from "./src/portal.js";
 import { createWalls } from "./src/texture-walls.js";
 import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
 import { NetherParticleSystem } from "./src/nether-particles/netherParticles.js";
-import { setupShadowMapping, renderShadowMap } from './src/shadowmap.js';
+import { createCustomShadowShader } from './src/shadowmap.js';
+
 
 // THREE.js needs 3 things
 // 1. renderer
@@ -68,24 +69,17 @@ portal.position.z = -4;
 scene.add(portal);
 
 // Add lights
-const hemiLight = new THREE.HemisphereLight(0x0099ff, 0xaa5500, 0.8);
-scene.add(hemiLight);
-
 const pointLight = new THREE.PointLight(0xffffff, 0.6);
-pointLight.position.set(2, 2, 2);
+pointLight.position.set(0, 0, 5);
 scene.add(pointLight);
 
+const dirLight = new THREE.DirectionalLight(0xa8a8a8, 1);
+dirLight.position.set(5, 5, 5);
+scene.add(dirLight);
+
 window.lights = [
-    hemiLight, pointLight
+    pointLight, dirLight
 ];
-
-// Add shadows
-const { lightCamera, shadowMaterial, sceneMaterial, shadowMap, updateShadowMatrix } = setupShadowMapping(scene, renderer);
-steve.castShadow = true;
-steve.material = sceneMaterial;
-
-room.children[5].castShadow = true;
-room.children[5].material = sceneMaterial;
 
 // Key controls
 const keys = { forward: false, backward: false, left: false, right: false, jump: false };
@@ -94,6 +88,18 @@ setupKeyControls(keys);
 // Particle system setup (snow)
 const snowParticleSystem = new ParticleSystem(scene, 200, 10, 10, 20, -2);  // Adjusted spread for 3D distribution
 const netherParticleSystem = new NetherParticleSystem(scene, 100, 2, 5, 8, -2);  // Adjusted spread for 3D distribution
+
+// In your scene setup
+const { setupShadowMapping, createShadowMaterial } = createCustomShadowShader();
+const { applyReceiveShadow, applyCastShadow, shadowLight } = setupShadowMapping(scene, renderer, camera);
+// Enable shadows for select objects
+let objectsToReceiveShadow = [room.children[2]]; // Assuming these are defined in your scene
+applyReceiveShadow(objectsToReceiveShadow);
+
+// Enable shadow casting for specific objects
+const objectsCastingShadow = [].concat(steve.children); // Add other objects that should cast shadows
+applyCastShadow(objectsCastingShadow);
+
 
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
@@ -111,9 +117,6 @@ function animate(t = 0) {
     if (timeUniform) {
         timeUniform.time.value += deltaTime;
     }
-
-    renderShadowMap(scene, renderer, lightCamera, shadowMap, shadowMaterial);
-    // updateShadowMatrix();
 
     // Render the scene
     renderer.render(scene, camera);
