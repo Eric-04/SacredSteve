@@ -4,11 +4,8 @@ import { createRoom } from './src/room.js';
 import { createMinecraftSteve } from './src/steve/create-steve.js';
 import { setupKeyControls, updateSteveMovement } from './src/steve/animate-steve.js';
 import { createNetherPortal } from "./src/portal.js";
-<<<<<<< HEAD
 import { createWalls } from "./src/texture-walls.js";
-=======
 import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
->>>>>>> 51abe963d8f40fc4d230b8f62497a7ac2f3c6ee7
 
 // THREE.js needs 3 things
 // 1. renderer
