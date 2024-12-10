@@ -4,13 +4,17 @@ import { createRoom } from './src/room.js';
 import { createMinecraftSteve } from './src/steve/create-steve.js';
 import { setupKeyControls, updateSteveMovement } from './src/steve/animate-steve.js';
 import { createNetherPortal } from "./src/portal.js";
+<<<<<<< HEAD
 import { createWalls } from "./src/texture-walls.js";
+=======
+import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
+>>>>>>> 51abe963d8f40fc4d230b8f62497a7ac2f3c6ee7
 
 // THREE.js needs 3 things
 // 1. renderer
 const w = window.innerWidth;
 const h = window.innerHeight;
-const renderer = new THREE.WebGLRenderer({antialias: true});
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(w, h);
 document.body.appendChild(renderer.domElement);
 
@@ -20,7 +24,7 @@ const aspect = w / h;
 const near = 0.1;
 const far = 100;
 const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-camera.position.z = 2; // moves the camera back a little bit
+camera.position.z = 2; // Move the camera back to see particles clearly
 
 // 3. scene
 const scene = new THREE.Scene();
@@ -76,16 +80,28 @@ scene.add(pointLight);
 const keys = { forward: false, backward: false, left: false, right: false, jump: false };
 setupKeyControls(keys);
 
+// Particle system setup (snow)
+const snowParticleSystem = new ParticleSystem(scene, 500, 10, 10, 20, -2);  // Adjusted spread for 3D distribution
+
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
     requestAnimationFrame(animate);
-    // mesh.rotation.y = t * 0.001;
+
+    // Update particle system (snow)
+    snowParticleSystem.update(deltaTime);
+
+    // Update Steve's movement based on key presses
     updateSteveMovement(steve, keys, deltaTime, t);
+
+    // Update portal time uniform (animation)
     const timeUniform = portal.children[4].material.uniforms;
     if (timeUniform) {
-        timeUniform.time.value += 0.005;
+        timeUniform.time.value += deltaTime;
     }
+
+    // Render the scene
     renderer.render(scene, camera);
     controls.update();
 }
+
 animate();

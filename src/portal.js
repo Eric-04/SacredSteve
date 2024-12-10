@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { snowVertexShader } from './shader';
+import { snowFragmentShader } from './shader';
 
 export function createNetherPortal() {
     // Frame Material
