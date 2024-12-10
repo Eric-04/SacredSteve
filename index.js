@@ -6,6 +6,8 @@ import { setupKeyControls, updateSteveMovement } from './src/steve/animate-steve
 import { createNetherPortal } from "./src/portal.js";
 import { createWalls } from "./src/texture-walls.js";
 import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
+import { NetherParticleSystem } from "./src/nether-particles/netherParticles.js";
+import { setupShadowMapping, renderShadowMap } from './src/shadowmap.js';
 
 // THREE.js needs 3 things
 // 1. renderer
@@ -73,12 +75,23 @@ const pointLight = new THREE.PointLight(0xffffff, 0.6);
 pointLight.position.set(2, 2, 2);
 scene.add(pointLight);
 
+// Add shadows
+const { lightCamera, shadowMaterial, sceneMaterial, shadowMap, updateShadowMatrix } = setupShadowMapping(scene, renderer);
+steve.castShadow = true;
+steve.material = sceneMaterial;
+
+room.children[5].castShadow = true;
+room.children[5].material = sceneMaterial;
+
 // Key controls
 const keys = { forward: false, backward: false, left: false, right: false, jump: false };
 setupKeyControls(keys);
 
 // Particle system setup (snow)
-const snowParticleSystem = new ParticleSystem(scene, 500, 10, 10, 20, -2);  // Adjusted spread for 3D distribution
+const snowParticleSystem = new ParticleSystem(scene, 200, 10, 10, 20, -2);  // Adjusted spread for 3D distribution
+const netherParticleSystem = new NetherParticleSystem(scene, 100, 2, 5, 8, -2);  // Adjusted spread for 3D distribution
+
+
 
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
@@ -86,6 +99,7 @@ function animate(t = 0) {
 
     // Update particle system (snow)
     snowParticleSystem.update(deltaTime);
+    netherParticleSystem.update(deltaTime);
 
     // Update Steve's movement based on key presses
     updateSteveMovement(steve, keys, deltaTime, t);
@@ -95,6 +109,9 @@ function animate(t = 0) {
     if (timeUniform) {
         timeUniform.time.value += deltaTime;
     }
+
+    renderShadowMap(scene, renderer, lightCamera, shadowMap, shadowMaterial);
+    // updateShadowMatrix();
 
     // Render the scene
     renderer.render(scene, camera);

@@ -80,7 +80,7 @@ export function createRoom() {
     });
 
     const window5 = new THREE.Mesh(tallWindowGeometry, tallWindowMaterial);
-    window5.position.set(0, 3, frontWall.position.z - 0.01); 
+    window5.position.set(0, 3, frontWall.position.z + 0.01); 
 
     const window6 = new THREE.Mesh(tallWindowGeometry, tallWindowMaterial);
     window6.position.set(0, 3, backWall.position.z + 0.01); 
