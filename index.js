@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { createRoom } from './src/room.js';
 import { createMinecraftSteve } from './src/steve/create-steve.js';
 import { setupKeyControls, updateSteveMovement } from './src/steve/animate-steve.js';
+import { createNetherPortal } from "./src/portal.js";
 
 // THREE.js needs 3 things
 // 1. renderer
@@ -52,6 +53,11 @@ scene.add(room);
 const steve = createMinecraftSteve();
 steve.position.set(0, -2, 0); // Place Steve on the floor
 scene.add(steve);
+
+// Add nether portal
+const portal = createNetherPortal();
+portal.position.z = -4;
+scene.add(portal);
 
 // Add lights
 const hemiLight = new THREE.HemisphereLight(0x0099ff, 0xaa5500, 0.8);
