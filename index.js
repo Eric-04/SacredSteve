@@ -7,7 +7,8 @@ import { createNetherPortal } from "./src/portal.js";
 import { createWalls } from "./src/texture-walls.js";
 import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
 import { NetherParticleSystem } from "./src/nether-particles/netherParticles.js";
-import { createCustomShadowShader } from './src/shadowmap.js';
+import { applyReceiveShadow, applyCastShadow, createCustomShadowShader } from './src/shadowmap.js';
+import { createPointLight, createDirLight, createShadowLight } from "./src/lights.js";
 
 
 // THREE.js needs 3 things
@@ -16,6 +17,9 @@ const w = window.innerWidth;
 const h = window.innerHeight;
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(w, h);
+// configure renderer for shadows
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
 // 2. camera
@@ -69,17 +73,13 @@ portal.position.z = -4;
 scene.add(portal);
 
 // Add lights
-const pointLight = new THREE.PointLight(0xffffff, 0.6);
-pointLight.position.set(0, 0, 5);
+const pointLight = createPointLight();
+const dirLight = createDirLight();
+const shadowLight = createShadowLight();
 scene.add(pointLight);
-
-const dirLight = new THREE.DirectionalLight(0xa8a8a8, 1);
-dirLight.position.set(5, 5, 5);
 scene.add(dirLight);
-
-window.lights = [
-    pointLight, dirLight
-];
+scene.add(shadowLight);
+window.lights = [pointLight, dirLight, shadowLight];
 
 // Key controls
 const keys = { forward: false, backward: false, left: false, right: false, jump: false };
@@ -90,15 +90,13 @@ const snowParticleSystem = new ParticleSystem(scene, 200, 10, 10, 20, -2);  // A
 const netherParticleSystem = new NetherParticleSystem(scene, 100, 2, 5, 8, -2);  // Adjusted spread for 3D distribution
 
 // In your scene setup
-const { setupShadowMapping, createShadowMaterial } = createCustomShadowShader();
-const { applyReceiveShadow, applyCastShadow, shadowLight } = setupShadowMapping(scene, renderer, camera);
-// Enable shadows for select objects
-let objectsToReceiveShadow = [room.children[2]]; // Assuming these are defined in your scene
-applyReceiveShadow(objectsToReceiveShadow);
+const { createShadowMaterial } = createCustomShadowShader();
 
-// Enable shadow casting for specific objects
-const objectsCastingShadow = [].concat(steve.children); // Add other objects that should cast shadows
-applyCastShadow(objectsCastingShadow);
+const objectsToReceiveShadow = [room.children[2]];
+const objectsCastingShadow = [].concat(steve.children);
+
+applyReceiveShadow(objectsToReceiveShadow);
+applyCastShadow(objectsCastingShadow, createShadowMaterial, dirLight);
 
 
 function animate(t = 0) {

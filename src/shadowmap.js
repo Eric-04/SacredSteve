@@ -70,7 +70,8 @@ export function createCustomShadowShader() {
             float diffuse = max(dot(vNormal, lightDir), 0.0);
 
             // Calculate shadow
-            float shadow = calculateShadow(shadowMap, shadowCoord, 0.005);
+            // float shadow = calculateShadow(shadowMap, shadowCoord, 0.005);
+            float shadow = 1.0;
 
             // Combine color, lighting, and shadow
             vec3 finalColor = objectColor * diffuse * shadow;
@@ -95,53 +96,28 @@ export function createCustomShadowShader() {
         });
     }
 
-    // Setup shadow mapping
-    function setupShadowMapping(scene, renderer, camera) {
-        // Configure renderer for shadows
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-        // Create directional light for shadows
-        const shadowLight = new THREE.DirectionalLight(0xffffff, 0.7);
-        shadowLight.position.set(5, 10, 7);
-        shadowLight.castShadow = true;
-
-        // Configure shadow map
-        shadowLight.shadow.mapSize.width = 2048;
-        shadowLight.shadow.mapSize.height = 2048;
-        shadowLight.shadow.camera.near = 1;
-        shadowLight.shadow.camera.far = 20;
-        shadowLight.shadow.bias = -0.001;
-
-        // Add light to scene
-        scene.add(shadowLight);
-
-        return {
-            applyReceiveShadow: (object) => {
-                object.forEach((child) => {
-                    child.receiveShadow = true;
-                });
-            },
-            applyCastShadow: (object) => {
-                object.forEach((child) => {
-                    if (child.isMesh) {
-                        // Store original material to restore later if needed
-                        child.userData.originalMaterial = child.material;
-                        
-                        // Create and apply custom shadow material
-                        const shadowMaterial = createShadowMaterial(child.material, shadowLight);
-                        child.material = shadowMaterial;
-                        
-                        child.castShadow = true;
-                    }
-                });
-            },
-            shadowLight
-        };
-    }
-
     return {
-        setupShadowMapping,
         createShadowMaterial
     };
+}
+
+export function applyReceiveShadow(object) {
+    object.forEach((child) => {
+        child.receiveShadow = true;
+    });
+};
+
+export function applyCastShadow (object, createShadowMaterial, shadowLight) {
+    object.forEach((child) => {
+        if (child.isMesh) {
+            // Store original material to restore later if needed
+            child.userData.originalMaterial = child.material;
+            
+            // Create and apply custom shadow material
+            const shadowMaterial = createShadowMaterial(child.material, shadowLight);
+            child.material = shadowMaterial;
+            
+            child.castShadow = true;
+        }
+    });
 }
