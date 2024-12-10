@@ -76,6 +76,10 @@ function animate(t = 0) {
     requestAnimationFrame(animate);
     // mesh.rotation.y = t * 0.001;
     updateSteveMovement(steve, keys, deltaTime, t);
+    const timeUniform = portal.children[4].material.uniforms;
+    if (timeUniform) {
+        timeUniform.time.value += 0.005;
+    }
     renderer.render(scene, camera);
     controls.update();
 }

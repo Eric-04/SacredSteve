@@ -30,14 +30,38 @@ export function createNetherPortal() {
     frame.add(bottom);
 
     // Add purple portal
-    const portalMaterial = new THREE.MeshStandardMaterial({
-        color: 0x7833AE, // Base color for the wall
-        side: THREE.FrontSide,
-    });
-    const portal = new THREE.Mesh(new THREE.PlaneGeometry(frameWidth-frameThickness, frameHeight), portalMaterial);
+    const portal = createPortalEffect(frameWidth-frameThickness, frameHeight);
     frame.add(portal);
 
     frame.position.y = 0.8;
 
     return frame;
+}
+
+function createPortalEffect(portalWidth, portalHeight) {
+    const portalMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          time: { value: 0.0 }
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform float time;
+          varying vec2 vUv;
+          void main() {
+            vec2 uv = vUv;
+            float glow = abs(sin(time * 2.0 + uv.x * 10.0 + uv.y * 10.0));
+            gl_FragColor = vec4(0.5 + 0.5 * glow, 0.1, 0.8 + 0.2 * glow, 1.0);
+          }
+        `
+    });
+      
+    const portalPlane = new THREE.Mesh(new THREE.PlaneGeometry(portalWidth, portalHeight), portalMaterial);
+    
+    return portalPlane;
 }
