@@ -54,10 +54,10 @@ steve.position.set(0, -2, 0); // Place Steve on the floor
 scene.add(steve);
 
 // Add lights
-const hemiLight = new THREE.HemisphereLight(0x0099ff, 0xaa5500, 0.6);
+const hemiLight = new THREE.HemisphereLight(0x0099ff, 0xaa5500, 0.8);
 scene.add(hemiLight);
 
-const pointLight = new THREE.PointLight(0xffffff, 0.8);
+const pointLight = new THREE.PointLight(0xffffff, 0.6);
 pointLight.position.set(2, 2, 2);
 scene.add(pointLight);
 

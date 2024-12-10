@@ -18,14 +18,16 @@ export function createRoom() {
 
     // Create the front and back wall materials without bump map
     const wallMaterial = new THREE.MeshStandardMaterial({
-        color: 0xAAAAAA, // Base color for the wall
+        color: 0xAAAAAA,
         side: THREE.FrontSide,
     });
 
     const textureWallMaterial = new THREE.MeshStandardMaterial({
-        color: 0xAAAAAA, // Base color for the wall
+        color: 0xAAAAAA, 
         side: THREE.FrontSide,
-        map: bump_map
+        bumpMap: bump_map,
+        bumpScale: 1.5,
+        map: text_map
     });
 
     // Create front wall
@@ -41,7 +43,7 @@ export function createRoom() {
 
     // Create left wall geometry
     const leftWallGeometry = new THREE.PlaneGeometry(roomDepth, roomHeight);
-    // applyDisplacement(leftWallGeometry, bump_map);  // Apply the bump map manually to the left wall
+    // applyDisplacement(leftWallGeometry, bump_map); 
 
     // Create left wall mesh with the manually modified geometry
     const leftWall = new THREE.Mesh(leftWallGeometry, textureWallMaterial);
@@ -50,7 +52,7 @@ export function createRoom() {
 
     // Create right wall geometry
     const rightWallGeometry = new THREE.PlaneGeometry(roomDepth, roomHeight);
-    // applyDisplacement(rightWallGeometry, bump_map);  // Apply the bump map manually to the right wall
+    // applyDisplacement(rightWallGeometry, bump_map);
 
     // Create right wall mesh with the manually modified geometry
     const rightWall = new THREE.Mesh(rightWallGeometry, textureWallMaterial);
@@ -58,7 +60,11 @@ export function createRoom() {
     rightWall.rotation.y = -Math.PI / 2;
 
     // Create floor
-    const floorMaterial = new THREE.MeshStandardMaterial({color: 0x555555});
+    const floor_texture = new THREE.TextureLoader().load('/floor texture.png');
+    const floorMaterial = new THREE.MeshStandardMaterial({
+        color: 0xAAAAAA, 
+        map: floor_texture
+    });
         
     const floorGeometry = new THREE.PlaneGeometry(roomWidth, roomDepth);
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -77,8 +83,11 @@ export function createRoom() {
     floor.position.y += shiftAmount;
 
     // Create the pillars lined by left and right walls
+    const pillar_texture = new THREE.TextureLoader().load('/pillar_text.png');
     const pillarGeometry = new THREE.CylinderGeometry(0.5, 0.5, roomHeight, 32);
-    const pillarMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
+    const pillarMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0xAAAAAA, map: pillar_texture 
+    });
 
     // Create a group for the pillars
     const pillarGroup = new THREE.Group();
@@ -86,7 +95,7 @@ export function createRoom() {
     // Position 4 pillars on the left wall, 1 units away from the wall
     for (let i = 0; i < 4; i++) {
         const pillar = new THREE.Mesh(pillarGeometry, pillarMaterial);
-        pillar.position.x = -roomWidth / 2 + 1.5; 
+        pillar.position.x = -roomWidth / 2 + 2; 
         pillar.position.y += shiftAmount; 
         pillar.position.z = roomDepth / 4 * (i + 1) - (roomDepth / 2 + 2.5); 
         pillarGroup.add(pillar);
@@ -95,31 +104,43 @@ export function createRoom() {
     // Position 4 pillars on the right wall, 1 units away from the wall
     for (let i = 0; i < 4; i++) {
         const pillar = new THREE.Mesh(pillarGeometry, pillarMaterial);
-        pillar.position.x = roomWidth / 2 - 1.5; 
+        pillar.position.x = roomWidth / 2 - 2; 
         pillar.position.y += shiftAmount; 
         pillar.position.z = roomDepth / 4 * (i + 1) - (roomDepth / 2 + 2.5);
         pillarGroup.add(pillar);
     }
 
     // Create the tall windows
-    const windowGeometry = new THREE.PlaneGeometry(3, 7); 
-    const windowMaterial = new THREE.MeshStandardMaterial({ 
+    const windowGeometry = new THREE.PlaneGeometry(3, 6.5); 
+    const stain_glass_texture1 = new THREE.TextureLoader().load('/steve_mosaic_left.png');
+    const stain_glass_texture2 = new THREE.TextureLoader().load('/steve_mosaic_right.png');
+
+    const leftStainWIndow = new THREE.MeshStandardMaterial({ 
         color: 0x87CEEB, 
         transparent: true, 
         opacity: 0.6,
-        side: THREE.DoubleSide 
+        side: THREE.DoubleSide, 
+        map: stain_glass_texture1
     });
 
-    const window1 = new THREE.Mesh(windowGeometry, windowMaterial);
+    const rightStainWIndow = new THREE.MeshStandardMaterial({ 
+        color: 0x87CEEB, 
+        transparent: true, 
+        opacity: 0.6,
+        side: THREE.DoubleSide, 
+        map: stain_glass_texture2
+    });
+
+    const window1 = new THREE.Mesh(windowGeometry, rightStainWIndow);
     window1.position.set(-4, 2.5, frontWall.position.z - 0.01); 
 
-    const window2 = new THREE.Mesh(windowGeometry, windowMaterial);
+    const window2 = new THREE.Mesh(windowGeometry, leftStainWIndow);
     window2.position.set(4, 2.5, frontWall.position.z - 0.01); 
 
-    const window3 = new THREE.Mesh(windowGeometry, windowMaterial);
+    const window3 = new THREE.Mesh(windowGeometry, rightStainWIndow);
     window3.position.set(-4, 2.5, backWall.position.z + 0.01); 
 
-    const window4 = new THREE.Mesh(windowGeometry, windowMaterial);
+    const window4 = new THREE.Mesh(windowGeometry, leftStainWIndow);
     window4.position.set(4, 2.5, backWall.position.z + 0.01); 
 
     const tallWindowGeometry = new THREE.PlaneGeometry(3, 8); 
@@ -188,6 +209,12 @@ export function createRoom() {
     return roomGroup;
 }
 
+// bump map
+function bumpDisplacement() {
+
+}
+
+// displacement map
 function applyDisplacement(geometry, texture) {
     const vertices = geometry.attributes.position.array;
     const width = texture.image.width;
@@ -203,13 +230,11 @@ function applyDisplacement(geometry, texture) {
         const u = (x / geometry.parameters.width) * width;
         const v = (y / geometry.parameters.height) * height;
 
-        // Get the bump value from the texture (grayscale value)
+        // Get the bump value from the texture
         const bumpValue = texture.image.getImageData(u, v, 1, 1).data[0] / 255;
-
-        // Apply displacement based on the bump value (higher bumpScale = stronger bump effect)
-        const bumpScale = 0.2; // displacement factor
-        vertices[i + 2] = z + bumpValue * bumpScale; // Modify the Z position
+        const bumpScale = 1.0; // displacement factor
+        vertices[i + 2] = z + bumpValue * bumpScale; // Modify Z position
     }
 
-    geometry.attributes.position.needsUpdate = true;  // Mark the geometry as needing an update
+    geometry.attributes.position.needsUpdate = true;
 }
