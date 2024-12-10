@@ -4,8 +4,10 @@ import { createRoom } from './src/room.js';
 import { createMinecraftSteve } from './src/steve/create-steve.js';
 import { setupKeyControls, updateSteveMovement } from './src/steve/animate-steve.js';
 import { createNetherPortal } from "./src/portal.js";
+import { createWalls } from "./src/texture-walls.js";
 import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
 import { NetherParticleSystem } from "./src/nether-particles/netherParticles.js";
+import { setupShadowMapping, renderShadowMap } from './src/shadowmap.js';
 
 // THREE.js needs 3 things
 // 1. renderer
@@ -51,6 +53,10 @@ controls.zoomSpeed = 0.8;
 const room = createRoom();
 scene.add(room);
 
+// Add displacement mapped walls
+const walls = createWalls();
+scene.add(walls);
+
 // Add Steve
 const steve = createMinecraftSteve();
 steve.position.set(0, -2, 0); // Place Steve on the floor
@@ -68,6 +74,14 @@ scene.add(hemiLight);
 const pointLight = new THREE.PointLight(0xffffff, 0.6);
 pointLight.position.set(2, 2, 2);
 scene.add(pointLight);
+
+// Add shadows
+const { lightCamera, shadowMaterial, sceneMaterial, shadowMap, updateShadowMatrix } = setupShadowMapping(scene, renderer);
+steve.castShadow = true;
+steve.material = sceneMaterial;
+
+room.children[5].castShadow = true;
+room.children[5].material = sceneMaterial;
 
 // Key controls
 const keys = { forward: false, backward: false, left: false, right: false, jump: false };
@@ -95,6 +109,9 @@ function animate(t = 0) {
     if (timeUniform) {
         timeUniform.time.value += deltaTime;
     }
+
+    renderShadowMap(scene, renderer, lightCamera, shadowMap, shadowMaterial);
+    // updateShadowMatrix();
 
     // Render the scene
     renderer.render(scene, camera);
