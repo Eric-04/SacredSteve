@@ -4,6 +4,7 @@ import { createRoom } from './src/room.js';
 import { createMinecraftSteve } from './src/steve/create-steve.js';
 import { setupKeyControls, updateSteveMovement } from './src/steve/animate-steve.js';
 import { createNetherPortal } from "./src/portal.js";
+import { createWalls } from "./src/texture-walls.js";
 
 // THREE.js needs 3 things
 // 1. renderer
@@ -48,6 +49,10 @@ controls.zoomSpeed = 0.8;
 // Add room
 const room = createRoom();
 scene.add(room);
+
+// Add displacement mapped walls
+const walls = createWalls();
+scene.add(walls);
 
 // Add Steve
 const steve = createMinecraftSteve();
