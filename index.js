@@ -75,6 +75,10 @@ const pointLight = new THREE.PointLight(0xffffff, 0.6);
 pointLight.position.set(2, 2, 2);
 scene.add(pointLight);
 
+window.lights = [
+    hemiLight, pointLight
+];
+
 // Add shadows
 const { lightCamera, shadowMaterial, sceneMaterial, shadowMap, updateShadowMatrix } = setupShadowMapping(scene, renderer);
 steve.castShadow = true;
@@ -90,8 +94,6 @@ setupKeyControls(keys);
 // Particle system setup (snow)
 const snowParticleSystem = new ParticleSystem(scene, 200, 10, 10, 20, -2);  // Adjusted spread for 3D distribution
 const netherParticleSystem = new NetherParticleSystem(scene, 100, 2, 5, 8, -2);  // Adjusted spread for 3D distribution
-
-
 
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
