@@ -110,18 +110,15 @@ export function createRoom() {
         side: THREE.DoubleSide 
     });
 
-    // add windows on the front wall
     const window1 = new THREE.Mesh(windowGeometry, windowMaterial);
     window1.position.set(-4, 2.5, frontWall.position.z - 0.01); 
 
     const window2 = new THREE.Mesh(windowGeometry, windowMaterial);
     window2.position.set(4, 2.5, frontWall.position.z - 0.01); 
 
-    // add windows on the back wall
     const window3 = new THREE.Mesh(windowGeometry, windowMaterial);
     window3.position.set(-4, 2.5, backWall.position.z + 0.01); 
 
-    // add windows on the back wall
     const window4 = new THREE.Mesh(windowGeometry, windowMaterial);
     window4.position.set(4, 2.5, backWall.position.z + 0.01); 
 
@@ -136,7 +133,6 @@ export function createRoom() {
     const window5 = new THREE.Mesh(tallWindowGeometry, tallWindowMaterial);
     window5.position.set(0, 3, frontWall.position.z - 0.01); 
 
-    // add windows on the back wall
     const window6 = new THREE.Mesh(tallWindowGeometry, tallWindowMaterial);
     window6.position.set(0, 3, backWall.position.z + 0.01); 
 
