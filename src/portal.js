@@ -1,6 +1,4 @@
 import * as THREE from 'three';
-import { snowVertexShader } from './shader';
-import { snowFragmentShader } from './shader';
 
 export function createNetherPortal() {
     // Frame Material
@@ -15,11 +13,11 @@ export function createNetherPortal() {
 
     // Add vertical sides
     const leftSide = new THREE.Mesh(new THREE.BoxGeometry(frameThickness, frameHeight, frameThickness), obsidianMaterial);
-    leftSide.position.x = -((frameWidth-frameThickness) / 2);
+    leftSide.position.x = -((frameWidth - frameThickness) / 2);
     frame.add(leftSide);
 
     const rightSide = new THREE.Mesh(new THREE.BoxGeometry(frameThickness, frameHeight, frameThickness), obsidianMaterial);
-    rightSide.position.x = (frameWidth-frameThickness) / 2;
+    rightSide.position.x = (frameWidth - frameThickness) / 2;
     frame.add(rightSide);
 
     // Add top and bottom
@@ -32,8 +30,12 @@ export function createNetherPortal() {
     frame.add(bottom);
 
     // Add purple portal
-    const portal = createPortalEffect(frameWidth-frameThickness, frameHeight);
+    const portal = createPortalEffect(frameWidth - frameThickness, frameHeight);
     frame.add(portal);
+
+    // Create particle system for portal
+    const particles = createPortalParticles(frameWidth - frameThickness, frameHeight);
+    frame.add(particles);
 
     frame.position.y = 0.8;
 
@@ -62,8 +64,37 @@ function createPortalEffect(portalWidth, portalHeight) {
           }
         `
     });
-      
+
     const portalPlane = new THREE.Mesh(new THREE.PlaneGeometry(portalWidth, portalHeight), portalMaterial);
-    
+
     return portalPlane;
+}
+
+function createPortalParticles(portalWidth, portalHeight) {
+    // Create geometry for the particles
+    const particleCount = 500;
+    const particlesGeometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+
+    // Create particle positions (random within portal width and height)
+    for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = Math.random() * portalWidth - portalWidth / 2;  // X position
+        positions[i * 3 + 1] = Math.random() * portalHeight - portalHeight / 2; // Y position
+        positions[i * 3 + 2] = Math.random() * 0.2;  // Z position
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    // Create material for the particles
+    const particlesMaterial = new THREE.PointsMaterial({
+        color: 0x9b4dca,  // Purple color
+        size: 0.05, // Size of each particle
+        blending: THREE.AdditiveBlending,
+        transparent: true
+    });
+
+    // Create particle system
+    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+
+    return particles;
 }

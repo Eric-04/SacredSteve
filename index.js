@@ -5,6 +5,7 @@ import { createMinecraftSteve } from './src/steve/create-steve.js';
 import { setupKeyControls, updateSteveMovement } from './src/steve/animate-steve.js';
 import { createNetherPortal } from "./src/portal.js";
 import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
+import { NetherParticleSystem } from "./src/nether-particles/netherParticles.js";
 
 // THREE.js needs 3 things
 // 1. renderer
@@ -73,7 +74,10 @@ const keys = { forward: false, backward: false, left: false, right: false, jump:
 setupKeyControls(keys);
 
 // Particle system setup (snow)
-const snowParticleSystem = new ParticleSystem(scene, 500, 10, 10, 20, -2);  // Adjusted spread for 3D distribution
+const snowParticleSystem = new ParticleSystem(scene, 200, 10, 10, 20, -2);  // Adjusted spread for 3D distribution
+const netherParticleSystem = new NetherParticleSystem(scene, 100, 2, 5, 8, -2);  // Adjusted spread for 3D distribution
+
+
 
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
@@ -81,6 +85,7 @@ function animate(t = 0) {
 
     // Update particle system (snow)
     snowParticleSystem.update(deltaTime);
+    netherParticleSystem.update(deltaTime);
 
     // Update Steve's movement based on key presses
     updateSteveMovement(steve, keys, deltaTime, t);
