@@ -74,6 +74,7 @@ const portal = createNetherPortal();
 portal.position.z = -5;
 scene.add(portal);
 
+
 // Add lights
 const pointLight = createPointLight(0, 0, 5);
 // const pointLight2 = createPointLight(-2, 0, 2);
@@ -85,8 +86,6 @@ const shadowLight = createShadowLight();
 scene.add(pointLight);
 
 scene.add(dirLight);
-
-
 scene.add(dirLight6);
 
 scene.add(shadowLight);
@@ -138,14 +137,18 @@ toggleButton.addEventListener('click', () => {
     toggleButton.textContent = godRaysEnabled ? 'Disable God Rays' : 'Enable God Rays';
 });
 
+const walls = createWalls();
+scene.add(walls);
+
 // Animation loop
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
     requestAnimationFrame(animate);
 
     // Add displacement mapped walls
-    const walls = createWalls();
-    scene.add(walls);
+    // const walls = createWalls();
+    // scene.add(walls);
+    
 
     // Update particle system (snow)
     snowParticleSystem.update(deltaTime);
