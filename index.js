@@ -9,8 +9,6 @@ import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
 import { NetherParticleSystem } from "./src/nether-particles/netherParticles.js";
 import { applyReceiveShadow, applyCastShadow, createCustomShadowShader } from './src/shadowmap.js';
 import { createPointLight, createDirLight, createShadowLight, changeShadowLightPosition, createSpotLight, createSpotLight2 } from "./src/lights.js";
-
-
 import { createCrepuscularRaysPass } from "./src/godRays.js";
 
 // THREE.js needs 3 things
@@ -60,27 +58,21 @@ controls.zoomSpeed = 0.8;
 const room = createRoom();
 scene.add(room);
 
-window.cameraPos = camera.position;
-
-
 // Add Steve
 const steve = createMinecraftSteve();
 steve.position.set(0, -2, 0); // Place Steve on the floor
 scene.add(steve);
-
 
 // Add nether portal
 const portal = createNetherPortal();
 portal.position.z = -5;
 scene.add(portal);
 
-
 // Add lights
 const pointLight = createPointLight(0, 0, 5);
-// const pointLight2 = createPointLight(-2, 0, 2);
 const dirLight = createDirLight(0, 5, 5);
 
-const dirLight6 = createDirLight(0, 0, 2);
+const dirLight2 = createDirLight(0, 0, 2);
 
 const shadowLight = createShadowLight();
 const spotlight = createSpotLight(0,25, 0);
@@ -100,10 +92,11 @@ scene.add(spotlight5);
 scene.add(spotlight6);
 scene.add(pointLight);
 scene.add(dirLight);
-scene.add(dirLight6);
+scene.add(dirLight2);
 scene.add(shadowLight);
-window.lights = [pointLight, dirLight, shadowLight, spotlight, spotlight1, spotlight2];
 
+window.lights = [pointLight, dirLight, shadowLight, spotlight, spotlight1, spotlight2];
+window.cameraPos = camera.position;
 
 // Key controls
 const keys = { forward: false, backward: false, left: false, right: false, jump: false };
@@ -160,8 +153,8 @@ function animate(t = 0) {
     requestAnimationFrame(animate);
 
     // Update particle system (snow)
-    // snowParticleSystem.update(deltaTime);
-    // netherParticleSystem.update(deltaTime);
+    snowParticleSystem.update(deltaTime);
+    netherParticleSystem.update(deltaTime);
 
     // Update Steve's movement based on key presses
     updateSteveMovement(steve, keys, deltaTime, t);
