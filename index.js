@@ -52,10 +52,17 @@ controls.zoomSpeed = 0.8;
 // Add room
 const room = createRoom();
 scene.add(room);
+// Add lights
+const hemiLight = new THREE.HemisphereLight(0x0099ff, 0xaa5500, 0.8);
+scene.add(hemiLight);
 
-// Add displacement mapped walls
-const walls = createWalls();
-scene.add(walls);
+const pointLight = new THREE.PointLight(0xffffff, 0.6);
+pointLight.position.set(2, 2, 2);
+scene.add(pointLight);
+
+window.lights = [pointLight];
+window.cameraPos = camera.position;
+
 
 // Add Steve
 const steve = createMinecraftSteve();
@@ -67,25 +74,13 @@ const portal = createNetherPortal();
 portal.position.z = -4;
 scene.add(portal);
 
-// Add lights
-const hemiLight = new THREE.HemisphereLight(0x0099ff, 0xaa5500, 0.8);
-scene.add(hemiLight);
+// // Add shadows
+// const { lightCamera, shadowMaterial, sceneMaterial, shadowMap, updateShadowMatrix } = setupShadowMapping(scene, renderer);
+// steve.castShadow = true;
+// steve.material = sceneMaterial;
 
-const pointLight = new THREE.PointLight(0xffffff, 0.6);
-pointLight.position.set(2, 2, 2);
-scene.add(pointLight);
-
-window.lights = [
-    hemiLight, pointLight
-];
-
-// Add shadows
-const { lightCamera, shadowMaterial, sceneMaterial, shadowMap, updateShadowMatrix } = setupShadowMapping(scene, renderer);
-steve.castShadow = true;
-steve.material = sceneMaterial;
-
-room.children[5].castShadow = true;
-room.children[5].material = sceneMaterial;
+// room.children[5].castShadow = true;
+// room.children[5].material = sceneMaterial;
 
 // Key controls
 const keys = { forward: false, backward: false, left: false, right: false, jump: false };
@@ -98,6 +93,10 @@ const netherParticleSystem = new NetherParticleSystem(scene, 100, 2, 5, 8, -2); 
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
     requestAnimationFrame(animate);
+
+    // Add displacement mapped walls
+    const walls = createWalls();
+    scene.add(walls);
 
     // Update particle system (snow)
     snowParticleSystem.update(deltaTime);
@@ -112,7 +111,7 @@ function animate(t = 0) {
         timeUniform.time.value += deltaTime;
     }
 
-    renderShadowMap(scene, renderer, lightCamera, shadowMap, shadowMaterial);
+    // renderShadowMap(scene, renderer, lightCamera, shadowMap, shadowMaterial);
     // updateShadowMatrix();
 
     // Render the scene
