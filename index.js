@@ -7,7 +7,11 @@ import { createNetherPortal } from "./src/portal.js";
 import { createWalls } from "./src/texture-walls.js";
 import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
 import { NetherParticleSystem } from "./src/nether-particles/netherParticles.js";
-import { setupShadowMapping, renderShadowMap } from './src/shadowmap.js';
+import { applyReceiveShadow, applyCastShadow, createCustomShadowShader } from './src/shadowmap.js';
+import { createPointLight, createDirLight, createShadowLight } from "./src/lights.js";
+
+
+import { createCrepuscularRaysPass } from "./src/godRays.js";
 
 // THREE.js needs 3 things
 // 1. renderer
@@ -15,6 +19,9 @@ const w = window.innerWidth;
 const h = window.innerHeight;
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(w, h);
+// configure renderer for shadows
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
 // 2. camera
@@ -52,15 +59,7 @@ controls.zoomSpeed = 0.8;
 // Add room
 const room = createRoom();
 scene.add(room);
-// Add lights
-const hemiLight = new THREE.HemisphereLight(0x0099ff, 0xaa5500, 0.8);
-scene.add(hemiLight);
 
-const pointLight = new THREE.PointLight(0xffffff, 0.6);
-pointLight.position.set(2, 2, 2);
-scene.add(pointLight);
-
-window.lights = [pointLight];
 window.cameraPos = camera.position;
 
 
@@ -69,27 +68,77 @@ const steve = createMinecraftSteve();
 steve.position.set(0, -2, 0); // Place Steve on the floor
 scene.add(steve);
 
+
 // Add nether portal
 const portal = createNetherPortal();
-portal.position.z = -4;
+portal.position.z = -5;
 scene.add(portal);
 
-// // Add shadows
-// const { lightCamera, shadowMaterial, sceneMaterial, shadowMap, updateShadowMatrix } = setupShadowMapping(scene, renderer);
-// steve.castShadow = true;
-// steve.material = sceneMaterial;
+// Add lights
+const pointLight = createPointLight(0, 0, 5);
+// const pointLight2 = createPointLight(-2, 0, 2);
+const dirLight = createDirLight(0, 5, 5);
 
-// room.children[5].castShadow = true;
-// room.children[5].material = sceneMaterial;
+const dirLight6 = createDirLight(0, 0, 2);
+
+const shadowLight = createShadowLight();
+scene.add(pointLight);
+
+scene.add(dirLight);
+
+
+scene.add(dirLight6);
+
+scene.add(shadowLight);
+window.lights = [pointLight, dirLight, dirLight6, shadowLight];
+
 
 // Key controls
 const keys = { forward: false, backward: false, left: false, right: false, jump: false };
 setupKeyControls(keys);
 
+
 // Particle system setup (snow)
 const snowParticleSystem = new ParticleSystem(scene, 200, 10, 10, 20, -2);  // Adjusted spread for 3D distribution
 const netherParticleSystem = new NetherParticleSystem(scene, 100, 2, 5, 8, -2);  // Adjusted spread for 3D distribution
 
+// In your scene setup
+const { createShadowMaterial } = createCustomShadowShader();
+
+const objectsToReceiveShadow = [room.children[2]];
+const objectsCastingShadow = [].concat(steve.children);
+
+applyReceiveShadow(objectsToReceiveShadow);
+applyCastShadow(objectsCastingShadow, createShadowMaterial, dirLight);
+
+
+const crepuscularRays = createCrepuscularRaysPass(scene, camera, renderer);
+
+// Track whether god rays are enabled
+let godRaysEnabled = true;
+
+// Create a toggle button
+const toggleButton = document.createElement('button');
+toggleButton.textContent = 'Toggle God Rays';
+toggleButton.style.position = 'absolute';
+toggleButton.style.top = '10px';
+toggleButton.style.left = '10px';
+toggleButton.style.padding = '10px';
+toggleButton.style.backgroundColor = '#333';
+toggleButton.style.color = '#fff';
+toggleButton.style.border = 'none';
+toggleButton.style.cursor = 'pointer';
+
+// Add the button to the DOM
+document.body.appendChild(toggleButton);
+
+// Add an event listener to the button
+toggleButton.addEventListener('click', () => {
+    godRaysEnabled = !godRaysEnabled;
+    toggleButton.textContent = godRaysEnabled ? 'Disable God Rays' : 'Enable God Rays';
+});
+
+// Animation loop
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
     requestAnimationFrame(animate);
@@ -105,18 +154,15 @@ function animate(t = 0) {
     // Update Steve's movement based on key presses
     updateSteveMovement(steve, keys, deltaTime, t);
 
-    // Update portal time uniform (animation)
-    const timeUniform = portal.children[4].material.uniforms;
-    if (timeUniform) {
-        timeUniform.time.value += deltaTime;
-    }
-
-    // renderShadowMap(scene, renderer, lightCamera, shadowMap, shadowMaterial);
-    // updateShadowMatrix();
-
-    // Render the scene
     renderer.render(scene, camera);
+
+    // Conditionally apply crepuscular rays
+    if (godRaysEnabled) {
+        crepuscularRays.render(scene, camera, renderer);
+    }
+    
     controls.update();
 }
 
 animate();
+
