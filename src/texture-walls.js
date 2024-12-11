@@ -91,7 +91,6 @@ function createPillars() {
 // displacement map
 function applyDisplacement(bump, texture, intensity) {
     const camera_position = window.cameraPos;
-    console.log(camera_position);
     const amb = new THREE.Vector3(0.2, 0.2, 0.3); 
     const diff = new THREE.Vector3(0.32, 0.3, 0.35); 
     const spec = new THREE.Vector3(0.15, 0.15, 0.2); 
@@ -287,7 +286,7 @@ void main() {
 
     // blend texture with computed color
     vec3 textureColor = texture2D(text, vUv).rgb; 
-    fragColor = mix(fragColor, textureColor, 0.3); // Blend texture with fragment color
+    fragColor = mix(fragColor, textureColor, 0.5); // Blend texture with fragment color
 
     gl_FragColor = vec4(fragColor, 1.0);
 }

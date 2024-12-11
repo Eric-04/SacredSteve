@@ -86,7 +86,6 @@ scene.add(pointLight);
 
 scene.add(dirLight);
 
-
 scene.add(dirLight6);
 
 scene.add(shadowLight);
@@ -111,8 +110,11 @@ const objectsCastingShadow = [].concat(steve.children);
 applyReceiveShadow(objectsToReceiveShadow);
 applyCastShadow(objectsCastingShadow, createShadowMaterial, dirLight);
 
-
 const crepuscularRays = createCrepuscularRaysPass(scene, camera, renderer);
+
+// Add displacement mapped walls
+const walls = createWalls();
+scene.add(walls);
 
 // Track whether god rays are enabled
 let godRaysEnabled = true;
@@ -142,10 +144,6 @@ toggleButton.addEventListener('click', () => {
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
     requestAnimationFrame(animate);
-
-    // Add displacement mapped walls
-    const walls = createWalls();
-    scene.add(walls);
 
     // Update particle system (snow)
     snowParticleSystem.update(deltaTime);
