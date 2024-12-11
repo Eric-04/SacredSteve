@@ -71,18 +71,27 @@ scene.add(steve);
 
 
 // Add nether portal
-// const portal = createNetherPortal();
-// portal.position.z = -4;
-// scene.add(portal);
+const portal = createNetherPortal();
+portal.position.z = -5;
+scene.add(portal);
 
 // Add lights
-const pointLight = createPointLight();
-const dirLight = createDirLight();
+const pointLight = createPointLight(0, 0, 5);
+// const pointLight2 = createPointLight(-2, 0, 2);
+const dirLight = createDirLight(0, 5, 5);
+
+const dirLight6 = createDirLight(0, 0, 2);
+
 const shadowLight = createShadowLight();
 scene.add(pointLight);
+
 scene.add(dirLight);
+
+
+scene.add(dirLight6);
+
 scene.add(shadowLight);
-window.lights = [pointLight, dirLight, shadowLight];
+window.lights = [pointLight, dirLight, dirLight6, shadowLight];
 
 
 // Key controls
@@ -106,6 +115,31 @@ applyCastShadow(objectsCastingShadow, createShadowMaterial, dirLight);
 
 const crepuscularRays = createCrepuscularRaysPass(scene, camera, renderer);
 
+// Track whether god rays are enabled
+let godRaysEnabled = true;
+
+// Create a toggle button
+const toggleButton = document.createElement('button');
+toggleButton.textContent = 'Toggle God Rays';
+toggleButton.style.position = 'absolute';
+toggleButton.style.top = '10px';
+toggleButton.style.left = '10px';
+toggleButton.style.padding = '10px';
+toggleButton.style.backgroundColor = '#333';
+toggleButton.style.color = '#fff';
+toggleButton.style.border = 'none';
+toggleButton.style.cursor = 'pointer';
+
+// Add the button to the DOM
+document.body.appendChild(toggleButton);
+
+// Add an event listener to the button
+toggleButton.addEventListener('click', () => {
+    godRaysEnabled = !godRaysEnabled;
+    toggleButton.textContent = godRaysEnabled ? 'Disable God Rays' : 'Enable God Rays';
+});
+
+// Animation loop
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
     requestAnimationFrame(animate);
@@ -117,13 +151,16 @@ function animate(t = 0) {
     // Update Steve's movement based on key presses
     updateSteveMovement(steve, keys, deltaTime, t);
 
-    // Render the scene normally first
+    // Render the scene normally
     renderer.render(scene, camera);
 
-    // Then apply crepuscular rays
-    crepuscularRays.render(scene, camera, renderer);
+    // Conditionally apply crepuscular rays
+    if (godRaysEnabled) {
+        crepuscularRays.render(scene, camera, renderer);
+    }
     
     controls.update();
 }
 
 animate();
+

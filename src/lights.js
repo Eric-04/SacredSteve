@@ -1,21 +1,22 @@
 import * as THREE from "three";
 
-export function createPointLight() {
-    const pointLight = new THREE.PointLight(0xffffff, 0.6);
-    pointLight.position.set(0, 0, 5);
+export function createPointLight(x, y, z) {
+    const pointLight = new THREE.PointLight(0xffffff, 2);
+    pointLight.position.set(x, y, z);
     return pointLight;
 }
 
-export function createDirLight() {
-    const dirLight = new THREE.DirectionalLight(0xa8a8a8, 1);
-    dirLight.position.set(5, 5, 5);
+
+export function createDirLight(x, y, z) {
+    const dirLight = new THREE.DirectionalLight(0xa8a8a8, 5);
+    dirLight.position.set(x, y, z);
     return dirLight;
 }
 
 export function createShadowLight() {
     // Create directional light for shadows
     const shadowLight = new THREE.DirectionalLight(0xffffff, 0.7);
-    shadowLight.position.set(5, 10, 7);
+    shadowLight.position.set(5, 10, -7);
     shadowLight.castShadow = true;
 
     // Configure shadow map

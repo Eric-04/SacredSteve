@@ -15,14 +15,14 @@ export function createCrepuscularRaysPass(scene, camera, renderer) {
 
     // Create a light source mesh
     const lightSource = new THREE.Mesh(
-        new THREE.PlaneGeometry(1, 1),
+        new THREE.PlaneGeometry(2.5, 3.5),
         new THREE.MeshBasicMaterial({ 
-            color: 0xffffff, 
+            color: 0xb223b2, 
             transparent: true, 
             opacity: 0.5 
         })
     );
-    lightSource.position.set(0, 0, -5);
+    lightSource.position.set(0, 1, -5.1);
     scene.add(lightSource);
 
     
@@ -34,7 +34,7 @@ export function createCrepuscularRaysPass(scene, camera, renderer) {
             tDepth: { value: null },
             lightPositionOnScreen: { value: new THREE.Vector2(0.5, 0.5) },
             exposure: { value: 0.05 },
-            decay: { value: 0.92 },
+            decay: { value: 0.95 },
             density: { value: 0.8 },
             weight: { value: 0.8 },
             samples: { value: 200 }
