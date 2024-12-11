@@ -72,7 +72,11 @@ function createPillars() {
     const pillar_texture = new THREE.TextureLoader().load('/pillar_texture.png');
     const pillar_bump = new THREE.TextureLoader().load('/pillar_bump.png');
     const pillarGeometry = new THREE.CylinderGeometry(0.5, 0.5, 14, 35);
-    const pillarMaterial = applyDisplacement(pillar_texture, pillar_bump, 0.2);
+    // const pillarMaterial = applyDisplacement(pillar_texture, pillar_bump, 0.2);
+    const pillarMaterial = new THREE.MeshStandardMaterial({
+        color: 0xAAAAAA, 
+        map: pillar_texture
+    });
     
     // Position 4 pillars on the left wall, 1 units away from the wall
     for (let i = 0; i < 4; i++) {

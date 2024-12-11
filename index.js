@@ -11,6 +11,8 @@ import { applyReceiveShadow, applyCastShadow, createCustomShadowShader } from '.
 import { createPointLight, createDirLight, createShadowLight } from "./src/lights.js";
 
 
+import { createCrepuscularRaysPass } from "./src/godRays.js";
+
 // THREE.js needs 3 things
 // 1. renderer
 const w = window.innerWidth;
@@ -67,10 +69,11 @@ const steve = createMinecraftSteve();
 steve.position.set(0, -2, 0); // Place Steve on the floor
 scene.add(steve);
 
+
 // Add nether portal
-const portal = createNetherPortal();
-portal.position.z = -4;
-scene.add(portal);
+// const portal = createNetherPortal();
+// portal.position.z = -4;
+// scene.add(portal);
 
 // Add lights
 const pointLight = createPointLight();
@@ -81,9 +84,11 @@ scene.add(dirLight);
 scene.add(shadowLight);
 window.lights = [pointLight, dirLight, shadowLight];
 
+
 // Key controls
 const keys = { forward: false, backward: false, left: false, right: false, jump: false };
 setupKeyControls(keys);
+
 
 // Particle system setup (snow)
 const snowParticleSystem = new ParticleSystem(scene, 200, 10, 10, 20, -2);  // Adjusted spread for 3D distribution
@@ -99,10 +104,12 @@ applyReceiveShadow(objectsToReceiveShadow);
 applyCastShadow(objectsCastingShadow, createShadowMaterial, dirLight);
 
 
+const crepuscularRays = createCrepuscularRaysPass(scene, camera, renderer);
+
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
     requestAnimationFrame(animate);
-
+    
     // Update particle system (snow)
     snowParticleSystem.update(deltaTime);
     netherParticleSystem.update(deltaTime);
@@ -110,14 +117,12 @@ function animate(t = 0) {
     // Update Steve's movement based on key presses
     updateSteveMovement(steve, keys, deltaTime, t);
 
-    // Update portal time uniform (animation)
-    const timeUniform = portal.children[4].material.uniforms;
-    if (timeUniform) {
-        timeUniform.time.value += deltaTime;
-    }
-
-    // Render the scene
+    // Render the scene normally first
     renderer.render(scene, camera);
+
+    // Then apply crepuscular rays
+    crepuscularRays.render(scene, camera, renderer);
+    
     controls.update();
 }
 
