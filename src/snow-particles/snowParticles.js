@@ -36,7 +36,7 @@ export class ParticleSystem {
         this.material = new THREE.ShaderMaterial({
             uniforms: {
                 pointSize: { value: 5.0 }, // Size of the particles
-                color: { value: new THREE.Color(0xffffff) },
+                color: { value: new THREE.Color(0xd8dae3) },
             },
             vertexShader: `
                 uniform float pointSize;

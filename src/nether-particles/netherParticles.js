@@ -40,8 +40,8 @@ export class NetherParticleSystem {
         // Shader material for particles
         this.material = new THREE.ShaderMaterial({
             uniforms: {
-                pointSize: { value: 5.0 }, // Size of the particles
-                color: { value: new THREE.Color(0x800080) },
+                pointSize: { value: 2.0 }, // Size of the particles
+                color: { value: new THREE.Color(0xd9a6ed) },
             },
             vertexShader: `
                 uniform float pointSize;

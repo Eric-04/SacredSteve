@@ -3,8 +3,8 @@ import * as THREE from 'three';
 export function createMinecraftSteve() {
     const steve = new THREE.Group();
 
-    const headColor = 0xd8a58f;
-    const bodyColor = 0x3c82e8;
+    const headColor = 0xccad9f;
+    const bodyColor = 0x5187b8;
     const legColor = 0x3c3c3c;
 
     // Head

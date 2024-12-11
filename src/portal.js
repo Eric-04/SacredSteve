@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 export function createNetherPortal() {
     // Frame Material
-    const obsidianMaterial = new THREE.MeshStandardMaterial({ color: 0x2c2f3b, roughness: 0.8 });
+    const obsidianMaterial = new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 0.8 });
 
     // Portal Frame
     const frameThickness = 0.8;
@@ -59,8 +59,8 @@ function createPortalEffect(portalWidth, portalHeight) {
           varying vec2 vUv;
           void main() {
             vec2 uv = vUv;
-            float glow = abs(sin(time * 2.0 + uv.x * 10.0 + uv.y * 10.0));
-            gl_FragColor = vec4(0.5 + 0.5 * glow, 0.1, 0.8 + 0.2 * glow, 1.0);
+            float glow = 0.7 * abs(sin(time * 2.0 + uv.x * 10.0 + uv.y * 10.0));
+            gl_FragColor = vec4(0.5 + 0.5 * glow, 0.1, 0.85 + 0.2 * glow, 1.0);
           }
         `
     });
@@ -87,7 +87,7 @@ function createPortalParticles(portalWidth, portalHeight) {
 
     // Create material for the particles
     const particlesMaterial = new THREE.PointsMaterial({
-        color: 0x9b4dca,  // Purple color
+        color: 0x8b61c9,  // Purple color
         size: 0.05, // Size of each particle
         blending: THREE.AdditiveBlending,
         transparent: true

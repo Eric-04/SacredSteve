@@ -33,7 +33,7 @@ export function createCrepuscularRaysPass(scene, camera, renderer) {
             tDiffuse: { value: null },
             tDepth: { value: null },
             lightPositionOnScreen: { value: new THREE.Vector2(0.5, 0.5) },
-            exposure: { value: 0.05 },
+            exposure: { value: 0.12 },
             decay: { value: 0.95 },
             density: { value: 0.8 },
             weight: { value: 0.8 },

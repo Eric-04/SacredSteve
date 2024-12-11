@@ -62,17 +62,17 @@ function createPillars() {
     const pillarGroup = new THREE.Group();
 
     // Create the pillars lined by left and right walls
-    const pillar_texture = new THREE.TextureLoader().load('/pillar_texture.png');
-    const pillar_bump = new THREE.TextureLoader().load('/pillar_bump.png');
-    const pillarGeometry = new THREE.CylinderGeometry(0.5, 0.5, 14, 35);
-    const pillarMaterial = applyDisplacement(pillar_texture, pillar_bump, 0.35);
+    const pillar_texture = new THREE.TextureLoader().load('/pillar_text_2.png');
+    const pillar_bump = new THREE.TextureLoader().load('/pillar_bump_2.png');
+    const pillarGeometry = new THREE.CylinderGeometry(0.5, 0.5, 12, 70, 200);
+    const pillarMaterial = applyDisplacement(pillar_bump, pillar_texture, 0.2);
 
     
     // Position 4 pillars on the left wall, 1 units away from the wall
     for (let i = 0; i < 4; i++) {
         const pillar = new THREE.Mesh(pillarGeometry, pillarMaterial);
         pillar.position.x = -14 / 2 + 2; 
-        pillar.position.y += 4.99; 
+        pillar.position.y += 3.99; 
         pillar.position.z = 20 / 4 * (i + 1) - (20 / 2 + 2.5); 
         pillarGroup.add(pillar);
     }
@@ -81,7 +81,7 @@ function createPillars() {
     for (let i = 0; i < 4; i++) {
         const pillar = new THREE.Mesh(pillarGeometry, pillarMaterial);
         pillar.position.x = 14 / 2 - 2; 
-        pillar.position.y += 4.99; 
+        pillar.position.y += 3.99; 
         pillar.position.z = 20 / 4 * (i + 1) - (20 / 2 + 2.5);
         pillarGroup.add(pillar);
     }
@@ -196,30 +196,30 @@ function applyDisplacement(bump, texture, intensity) {
             }
         `,
         fragmentShader: `
-uniform sampler2D text;
+        uniform sampler2D text;
 
-varying vec2 vUv;
-varying vec3 world_space_pos;
-varying vec3 world_space_norm;
+        varying vec2 vUv;
+        varying vec3 world_space_pos;
+        varying vec3 world_space_norm;
 
-uniform vec3 camera_pos;
-uniform float ka_term;
-uniform float kd_term;
-uniform float ks_term;
+        uniform vec3 camera_pos;
+        uniform float ka_term;
+        uniform float kd_term;
+        uniform float ks_term;
 
-uniform float amt;
-uniform float lightType[8];   // 1 for directional, 2 for point, 3 for spot
-uniform float lightColors[24]; 
-uniform float lightDir[24];    
-uniform float lightPos[24];    
-uniform float lightAtt[24];    
-uniform float lightPem[8];     
-uniform float lightAngle[8];   
-uniform float shininess;
+        uniform float amt;
+        uniform float lightType[8];   // 1 for directional, 2 for point, 3 for spot
+        uniform float lightColors[24]; 
+        uniform float lightDir[24];    
+        uniform float lightPos[24];    
+        uniform float lightAtt[24];    
+        uniform float lightPem[8];     
+        uniform float lightAngle[8];   
+        uniform float shininess;
 
-uniform vec3 ambient;
-uniform vec3 diffuse;
-uniform vec3 specular;
+        uniform vec3 ambient;
+        uniform vec3 diffuse;
+        uniform vec3 specular;
 
 void main() {
     // Output color
@@ -286,11 +286,11 @@ void main() {
 
     // blend texture with computed color
     vec3 textureColor = texture2D(text, vUv).rgb; 
-    fragColor = mix(fragColor, textureColor, 0.5); // Blend texture with fragment color
+    fragColor = mix(fragColor, textureColor, 0.4); // Blend texture with fragment color
 
     gl_FragColor = vec4(fragColor, 1.0);
 }
-        `
+`
     });
     return material;
 }

@@ -8,7 +8,7 @@ import { createWalls } from "./src/texture-walls.js";
 import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
 import { NetherParticleSystem } from "./src/nether-particles/netherParticles.js";
 import { applyReceiveShadow, applyCastShadow, createCustomShadowShader } from './src/shadowmap.js';
-import { createPointLight, createDirLight, createShadowLight } from "./src/lights.js";
+import { createPointLight, createDirLight, createShadowLight, changeShadowLightPosition, createSpotLight, createSpotLight2 } from "./src/lights.js";
 
 
 import { createCrepuscularRaysPass } from "./src/godRays.js";
@@ -74,6 +74,7 @@ const portal = createNetherPortal();
 portal.position.z = -5;
 scene.add(portal);
 
+
 // Add lights
 const pointLight = createPointLight(0, 0, 5);
 // const pointLight2 = createPointLight(-2, 0, 2);
@@ -82,14 +83,26 @@ const dirLight = createDirLight(0, 5, 5);
 const dirLight6 = createDirLight(0, 0, 2);
 
 const shadowLight = createShadowLight();
+const spotlight = createSpotLight(0,25, 0);
+const spotlight1 = createSpotLight(0,10, 9.5);
+const spotlight2 = createSpotLight(0,10, -9.5);
+const spotlight3 = createSpotLight2(-6.5, 7.2, 9.5);
+const spotlight4 = createSpotLight2(6.5, 7.2, 9.5);
+const spotlight5 = createSpotLight2(-6.5, 7.2, -9.5);
+const spotlight6 = createSpotLight2(6.5, 7.2, -9.5);
+
+scene.add(spotlight);
+scene.add(spotlight1);
+scene.add(spotlight2);
+scene.add(spotlight3);
+scene.add(spotlight4);
+scene.add(spotlight5);
+scene.add(spotlight6);
 scene.add(pointLight);
-
 scene.add(dirLight);
-
 scene.add(dirLight6);
-
 scene.add(shadowLight);
-window.lights = [pointLight, dirLight, dirLight6, shadowLight];
+window.lights = [pointLight, dirLight, shadowLight, spotlight, spotlight1, spotlight2];
 
 
 // Key controls
@@ -140,14 +153,15 @@ toggleButton.addEventListener('click', () => {
     toggleButton.textContent = godRaysEnabled ? 'Disable God Rays' : 'Enable God Rays';
 });
 
+
 // Animation loop
 function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
     requestAnimationFrame(animate);
 
     // Update particle system (snow)
-    snowParticleSystem.update(deltaTime);
-    netherParticleSystem.update(deltaTime);
+    // snowParticleSystem.update(deltaTime);
+    // netherParticleSystem.update(deltaTime);
 
     // Update Steve's movement based on key presses
     updateSteveMovement(steve, keys, deltaTime, t);
@@ -155,9 +169,11 @@ function animate(t = 0) {
     renderer.render(scene, camera);
 
     // Conditionally apply crepuscular rays
-    if (godRaysEnabled) {
+    if (!godRaysEnabled) {
         crepuscularRays.render(scene, camera, renderer);
     }
+
+    changeShadowLightPosition(shadowLight, 0-steve.position.x, 5-steve.position.y, -5-steve.position.z)
     
     controls.update();
 }
