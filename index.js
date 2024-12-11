@@ -8,7 +8,7 @@ import { createWalls } from "./src/texture-walls.js";
 import { ParticleSystem } from "./src/snow-particles/snowParticles.js";
 import { NetherParticleSystem } from "./src/nether-particles/netherParticles.js";
 import { applyReceiveShadow, applyCastShadow, createCustomShadowShader } from './src/shadowmap.js';
-import { createPointLight, createDirLight, createShadowLight } from "./src/lights.js";
+import { createPointLight, createDirLight, createShadowLight, changeShadowLightPosition } from "./src/lights.js";
 
 
 import { createCrepuscularRaysPass } from "./src/godRays.js";
@@ -145,11 +145,6 @@ function animate(t = 0) {
     const deltaTime = 0.016; // Approximate frame time for 60 FPS
     requestAnimationFrame(animate);
 
-    // Add displacement mapped walls
-    // const walls = createWalls();
-    // scene.add(walls);
-    
-
     // Update particle system (snow)
     snowParticleSystem.update(deltaTime);
     netherParticleSystem.update(deltaTime);
@@ -160,9 +155,11 @@ function animate(t = 0) {
     renderer.render(scene, camera);
 
     // Conditionally apply crepuscular rays
-    if (godRaysEnabled) {
+    if (!godRaysEnabled) {
         crepuscularRays.render(scene, camera, renderer);
     }
+
+    changeShadowLightPosition(shadowLight, 0-steve.position.x, 5-steve.position.y, -5-steve.position.z)
     
     controls.update();
 }
